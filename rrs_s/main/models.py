@@ -1,6 +1,7 @@
 from django.contrib.auth.models import AbstractUser
 from django.contrib.auth.validators import UnicodeUsernameValidator
 from django.db import models
+from uuslug import slugify
 
 from main.util import get_timestamp_path, is_active_post
 
@@ -29,8 +30,16 @@ class Client(AbstractUser):
     )
     donations = models.ForeignKey(
         Donations,
-        on_delete=models.CASCADE
+        on_delete=models.CASCADE,
+        null=True
     )
+    slug = models.SlugField(
+        unique=True,
+    )
+
+    def save(self, *args, **kwargs):
+        self.slug = slugify(self.username)
+        super().save(*args, **kwargs)
 
     class Meta(AbstractUser.Meta):
         pass
@@ -43,6 +52,13 @@ class Rubric(models.Model):
         verbose_name='Название'
 
     )
+    slug = models.SlugField(
+        unique=True,
+    )
+
+    def save(self, *args, **kwargs):
+        self.slug = slugify(self.title)
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return self.title
@@ -62,7 +78,8 @@ class Post(models.Model):
     )
     title = models.CharField(
         max_length=100,
-        verbose_name='Название'
+        verbose_name='Название',
+        unique=True,
     )
     content = models.TextField(
         blank=True,
@@ -85,11 +102,18 @@ class Post(models.Model):
     is_active = models.BooleanField(
         default=is_active_post
     )
+    slug = models.SlugField(
+        unique=True
+    )
 
     def delete(self, *args, **kwargs):
         for ai in self.additionalimage_set.all():
             ai.delete()
         super().delete(*args, **kwargs)
+
+    def save(self, *args, **kwargs):
+        self.slug = slugify(self.title)
+        super().save(*args, **kwargs)
 
     class Meta:
         verbose_name = ''
@@ -98,6 +122,7 @@ class Post(models.Model):
 
 
 class AdditionalImage(models.Model):
+    """Дополнительные фотографии, будут вместе с постами или видео"""
     post = models.ForeignKey(
         Post,
         on_delete=models.CASCADE,
@@ -117,6 +142,7 @@ class AdditionalImage(models.Model):
 
 
 class Comments(models.Model):
+    """Комментарии"""
     post = models.ForeignKey(
         Post,
         on_delete=models.CASCADE,

@@ -158,4 +158,4 @@ AUTH_USER_MODEL = 'main.Client'
 
 STATIC_URL = '/static/'
 MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'main/static/media')
+MEDIA_ROOT = os.path.join(BASE_DIR, 'main/static/main/media')
