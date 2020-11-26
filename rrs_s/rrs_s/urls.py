@@ -24,6 +24,12 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include(('main.urls', 'main'), namespace='main')),
     path('social/', include('social_django.urls', namespace='social')),
+    path('api-auth/', include('rest_framework.urls')),  # Для админки рест фреймворк
+    path('api/', include(('api.urls', 'api'), namespace='api')),
+    path('auth/', include('rest_framework_social_oauth2.urls')),  # для регистрации через соц. сети
+    path('auth/', include('djoser.urls.authtoken')),  # для создания токенов
+    path('auth/', include('djoser.urls.jwt')),  # для жвт токенов
+    path('auth/', include('djoser.urls')),  # для остальных действий по регистрации, аутентефикации и тд
 ]
 
 if settings.DEBUG:

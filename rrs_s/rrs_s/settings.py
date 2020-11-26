@@ -44,10 +44,46 @@ INSTALLED_APPS = [
     'bootstrap4',
     'crispy_forms',
     'social_django',
+    'django_filters',
+    'djoser',
+    'rest_framework_social_oauth2',
+    'oauth2_provider',
+
+    'rest_framework',
+    'rest_framework.authtoken',
 
     'main',
+    'api',
 
 ]
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.TokenAuthentication',  # Обычные токены, которые будут созранятся в базу данных
+        'rest_framework_simplejwt.authentication.JWTAuthentication', # для жвт токенов
+        'oauth2_provider.contrib.rest_framework.OAuth2Authentication',  # для авторизации с помощью OAUTH2
+        'rest_framework_social_oauth2.authentication.SocialAuthentication', # тоже самое для чего и выше
+    ),
+    'DEFAULT_FILTER_BACKENDS':(
+        'django_filters.rest_framework.DjangoFilterBackend' # Для фильтрации запросов drf
+    ),
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination', # Что будет отвечать за пагинацию на сайте
+    'PAGE_SIZE': 1, # Какое кол-во записей будет выводится на 1 странице
+}
+
+DJOSER = {
+    """
+    Токен для авторизации передается в headers
+    Заголовок в headers выглядит примерно так
+    Authorization: Token <token>
+    """
+
+    'PASSWORD_RESET_CONFIRM_URL': '#/password/reset/confirm/{uid}/{token}',  # Для подтверждения сброса пароля
+    'USERNAME_RESET_CONFIRM_URL': '#/username/reset/confirm/{uid}/{token}',  # Для подтверждения сброса юзернейма
+    'ACTIVATION_URL': '#/activate/{uid}/{token}',  # Ссылка с активацией
+    'SEND_ACTIVATION_EMAIL': True,  # Отправлять ли ссылку активации на почту
+    'SERIALIZERS': {},
+}
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

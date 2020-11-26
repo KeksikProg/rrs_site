@@ -20,54 +20,62 @@
         <header class = 'text-center mt-3 md-5'>
 			<a><img src = '../static/main/media/rrs_logo.png' class = 'main-image center' ></a>
 		</header>
-
 		<div class = 'dropdown-divider mt-3'></div>
 
-		<nav class = 'row ' >
+
+		<nav class = 'row' >
+			<div class = ' justify-content-center '>
+				<a class = 'silki silki-cursor'>Главная</a>
+				<a class = 'silki silki-cursor'>Видео</a>
+				<a class = 'silki silki-cursor'>Статьи</a>
+			</div>
+
+
+
 			<ul class = 'col nav justify-content-end my-2 mr-5 pr-5'>
 
-				<!-- profile -->
+					<!-- profile -->
 
-				<li class = 'nav-item dropdown'><a href="#" class = 'nav-link dropdown-toggle mr-5' role = 'button' aria-haspopup = 'true' aria-expended = 'false' style = 'color: black;'>Профиль</a>
-					{% if user.is_authenticated %}
-						<div class = 'dropdown-menu'>
-							<a class = 'dropdown-item' href="#">Изменить личные данные</a>
-<!--							% url 'main:changeuserinfo'%-->
-							<a class = 'dropdown-item' href="#">Изменить пароль</a>
-<!--							% url 'main:changeuserpass' %-->
-							<div class = 'dropdown-divider'></div>
-							<a class = 'dropdown-item' href="#">Выйти</a>
-<!--							% url 'main:logout' %-->
-							<div class = 'dropdown-divider'></div>
-							<a class = 'dropdown-item' href="#">Удалить аккаунт</a>
-<!--							% url 'main:deleteuser' %-->
-						</div>
-					{% else %}
-						<div class = 'dropdown-menu'> <!--Раскрывающеся меню-->
-							<a class = 'dropdown-item' href="#">Вход</a>
-<!--							% url 'main:login' %-->
-							<a class = 'dropdown-item' href="#">Регистрация</a>
-<!--							% url 'main:register' %-->
-						</div>
-					{% endif %}
-				</li>
-
-				<!-- admin panel -->
-
-				{% if user.is_superuser %}
-					<li class = 'nav-item dropdown ml-3'><a href="#" class = 'nav-link dropdown-toggle' style="color:black;" role = 'button' aria-haspopup = 'true' aria-expended = 'false'>Админка</a>
-						<div class = 'dropdown-menu'> <!--Раскрывающеся меню-->
-							<a class = 'dropdown-item' href="{}">Добавить статью</a>
-<!--							% url 'main:add_article' %-->
-							<a class = 'dropdown-item' href="/admin">Перейти на Админ. сайт</a>
-						</div>
+					<li class = 'nav-item dropdown '><a href="#" class = 'silki-cursor silki nav-link dropdown-toggle mr-5' role = 'button' aria-haspopup = 'true' aria-expended = 'false'>Профиль</a>
+						{% if user.is_authenticated %}
+							<div class = 'dropdown-menu'>
+								<a class = 'dropdown-item' href="#">Изменить личные данные</a>
+	<!--							% url 'main:changeuserinfo'%-->
+								<a class = 'dropdown-item' href="#">Изменить пароль</a>
+	<!--							% url 'main:changeuserpass' %-->
+								<div class = 'dropdown-divider'></div>
+								<a class = 'dropdown-item' href="#">Выйти</a>
+	<!--							% url 'main:logout' %-->
+								<div class = 'dropdown-divider'></div>
+								<a class = 'dropdown-item' href="#">Удалить аккаунт</a>
+	<!--							% url 'main:deleteuser' %-->
+							</div>
+						{% else %}
+							<div class = 'dropdown-menu'> <!--Раскрывающеся меню-->
+								<a class = 'dropdown-item' href="#">Вход</a>
+	<!--							% url 'main:login' %-->
+								<a class = 'dropdown-item' href="#">Регистрация</a>
+	<!--							% url 'main:register' %-->
+							</div>
+						{% endif %}
 					</li>
-				{% endif %}
-			</ul>
+
+					<!-- admin panel -->
+
+					{% if user.is_superuser %}
+						<li class = 'nav-item dropdown ml-3 mr-5 '><a href="#" class = 'silki-cursor silki nav-link dropdown-toggle'  role = 'button' aria-haspopup = 'true' aria-expended = 'false'>Админка</a>
+							<div class = 'dropdown-menu'> <!--Раскрывающеся меню-->
+								<a class = 'dropdown-item' href="{}">Добавить статью</a>
+	<!--							% url 'main:add_article' %-->
+								<a class = 'dropdown-item' href="/admin">Перейти на Админ. сайт</a>
+							</div>
+						</li>
+					{% endif %}
+				</ul>
 		</nav>
 
+
+
 		<div class = 'dropdown-divider mt-2'></div>
-
-
     </body>
 </html>
