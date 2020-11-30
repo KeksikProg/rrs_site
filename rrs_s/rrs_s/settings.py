@@ -71,6 +71,14 @@ REST_FRAMEWORK = {
     'PAGE_SIZE': 1, # Какое кол-во записей будет выводится на 1 странице
 }
 
+# smtp
+EMAIL_PORT = os.getenv('email_port')  # Порт через который будут отправляется письма
+EMAIL_USE_TLS = True  # Использовать ли протокол шифрования TLS
+EMAIL_HOST = os.getenv('email_host')  # Какой протокол SMTP использовать
+EMAIL_HOST_USER = os.getenv('email_host_user')  # Почта с которой будут отправлятся все письма
+EMAIL_HOST_PASSWORD = os.getenv('email_host_pass')  # Пароль от это почты
+
+
 DJOSER = {
     """
     Токен для авторизации передается в headers

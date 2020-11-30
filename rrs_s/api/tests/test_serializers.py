@@ -1,7 +1,7 @@
 from django.test import TestCase
 
-from api.serializers import RubricListSerializer, PostListSerializer
-from main.models import Rubric, Post
+from api.serializers import RubricListSerializer, PostListSerializer, CommentListSerializer
+from main.models import Rubric, Post, Comments
 
 
 class SerializersTestCase(TestCase):
@@ -30,6 +30,24 @@ class SerializersTestCase(TestCase):
             'content': 'real keks',
             'image': None,
             'author': 'maxek',
+            'created_at': data['created_at']
+        }
+        self.assertEqual(exp_data, data)
+
+    def test_comments(self):
+        rubric = Rubric.objects.create(title='Видео')
+        post1 = Post.objects.create(rubric=rubric,
+                                    title='keks',
+                                    content='real keks',
+                                    image='',
+                                    author='maxek',
+                                    is_active=True)
+        comment = Comments.objects.create(post = post1, author = 'maxek', content = 'keks')
+        data = CommentListSerializer(comment).data
+        exp_data = {
+            'post': post1.id,
+            'author': 'maxek',
+            'content': 'keks',
             'created_at': data['created_at']
         }
         self.assertEqual(exp_data, data)
