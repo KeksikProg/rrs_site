@@ -1,13 +1,13 @@
 from django.shortcuts import get_object_or_404, get_list_or_404
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import viewsets, mixins
-from rest_framework.permissions import IsAuthenticated, IsAdminUser
+from rest_framework.permissions import IsAuthenticated, IsAdminUser, IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet, ModelViewSet, ViewSet
 
-from api.serializers import RubricListSerializer, PostListSerializer, PostDetailSerializer
-from api.util import PostFilter
-from main.models import Rubric, Post
+from api.serializers import RubricListSerializer, PostListSerializer, PostDetailSerializer, CommentListSerializer
+from api.util import PostFilter, CommentsFilter
+from main.models import Rubric, Post, Comments
 from rest_framework.generics import ListAPIView
 
 
@@ -20,7 +20,7 @@ class RubricViewSet(viewsets.ViewSet):
 
     def get_permissions(self):
         if self.action == 'list':
-            permission_classes = [IsAuthenticated]
+            permission_classes = [IsAuthenticatedOrReadOnly]
         else:
             permission_classes = [IsAdminUser]
         return [permission() for permission in permission_classes]
@@ -40,5 +40,18 @@ class PostViewSet(viewsets.ReadOnlyModelViewSet):
             return PostDetailSerializer
 
     def get_queryset(self):
-        queryset = Post.objects.filter(is_active = True)
+        queryset = Post.objects.filter(is_active=True)
         return queryset
+
+
+class CommentsViewSet(viewsets.ModelViewSet):
+    # permission_classes = [IsAuthenticated]
+    queryset = Comments.objects.all()
+    serializer_class = CommentListSerializer
+    filter_backends = (DjangoFilterBackend,)
+    filterset_class = CommentsFilter
+    lookup_field = 'slug'
+
+    class Meta:
+        model = Comments
+        fields = '__all__'

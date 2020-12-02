@@ -1,5 +1,5 @@
 from django_filters import rest_framework as filters
-from main.models import Post
+from main.models import Post, Comments
 
 
 class CharFilterInFilter(filters.CharFilter, filters.BaseInFilter):
@@ -12,3 +12,11 @@ class PostFilter(filters.FilterSet):
     class Meta:
         model = Post
         fields = ['rubric']
+
+
+class CommentsFilter(filters.FilterSet):
+    post = CharFilterInFilter(field_name='post__slug', lookup_expr='in')
+
+    class Meta:
+        model = Comments
+        fields = ['post']

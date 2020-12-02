@@ -4,7 +4,7 @@ from main.models import Rubric, Post, Comments
 
 
 class RubricListSerializer(serializers.ModelSerializer):
-    """"""
+    """Сериализатор рубрик"""
 
     class Meta:
         model = Rubric
@@ -20,7 +20,7 @@ class RubricListSerializer(serializers.ModelSerializer):
 
 
 class PostListSerializer(serializers.ModelSerializer):
-    """"""
+    """Сериализатор списка постов"""
 
     class Meta:
         # list_serializer_class = FilterPostSerializer Из-за этого модуля не работает django_filters который нужнее
@@ -29,7 +29,7 @@ class PostListSerializer(serializers.ModelSerializer):
 
 
 class CommentListSerializer(serializers.ModelSerializer):
-    """"""
+    """Сериализатор комментариев"""
 
     class Meta:
         model = Comments
@@ -37,7 +37,7 @@ class CommentListSerializer(serializers.ModelSerializer):
 
 
 class PostDetailSerializer(serializers.ModelSerializer):
-    """"""
+    """Сериализатор детального отображения постов"""
 
     class Meta:
         model = Post

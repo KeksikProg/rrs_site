@@ -68,7 +68,7 @@ REST_FRAMEWORK = {
         'django_filters.rest_framework.DjangoFilterBackend' # Для фильтрации запросов drf
     ),
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination', # Что будет отвечать за пагинацию на сайте
-    'PAGE_SIZE': 1, # Какое кол-во записей будет выводится на 1 странице
+    'PAGE_SIZE': 5, # Какое кол-во записей будет выводится на 1 странице
 }
 
 # smtp
