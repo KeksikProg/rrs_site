@@ -1,6 +1,6 @@
 from django.test import TestCase
 
-from api.serializers import RubricListSerializer, PostListSerializer, CommentListSerializer, PostDetailSerializer
+from api.serializers import RubricListAndCreateSerializer, PostListSerializer, CommentsListAndCreateSerializer, PostDetailSerializer
 from main.models import Rubric, Post, Comments
 
 
@@ -8,7 +8,7 @@ class SerializersTestCase(TestCase):
     def test_rubric(self):
         rubric1 = Rubric.objects.create(title='Видео')
         rubric2 = Rubric.objects.create(title='Кекс')
-        data = RubricListSerializer([rubric1, rubric2], many=True).data
+        data = RubricListAndCreateSerializer([rubric1, rubric2], many=True).data
         exp_data = [
             {'title': rubric1.title},
             {'title': rubric2.title}
@@ -78,7 +78,7 @@ class SerializersTestCase(TestCase):
                                     author='maxek',
                                     is_active=True)
         comment = Comments.objects.create(post=post1, author='maxek', content='keks')
-        data = CommentListSerializer(comment).data
+        data = CommentsListAndCreateSerializer(comment).data
         exp_data = {
             'post': post1.id,
             'author': 'maxek',

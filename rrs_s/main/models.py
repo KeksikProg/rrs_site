@@ -100,7 +100,7 @@ class Post(models.Model):
         verbose_name='Добавлено'
     )
     is_active = models.BooleanField(
-        default=is_active_post
+        default=False
     )
     slug = models.SlugField(
         unique=True
