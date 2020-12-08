@@ -54,6 +54,7 @@ INSTALLED_APPS = [
 
     'main',
     'api',
+    'push_notif',
 
 ]
 

@@ -1,10 +1,15 @@
 from django.test import TestCase
 
-from api.serializers import RubricListAndCreateSerializer, PostListSerializer, CommentsListAndCreateSerializer, PostDetailSerializer
+from api.serializers import RubricListAndCreateSerializer, PostListSerializer, CommentsListAndCreateSerializer, PostDetailSerializer, PostCreateSerializer
 from main.models import Rubric, Post, Comments
+
+"""Тесты для проверки сериализаторов"""
+"""Для их проверки не надо отключать Permissions, они тут ничего не значат"""
 
 
 class SerializersTestCase(TestCase):
+    """Опять один тест кейс для всего"""
+
     def test_rubric(self):
         rubric1 = Rubric.objects.create(title='Видео')
         rubric2 = Rubric.objects.create(title='Кекс')
@@ -85,4 +90,20 @@ class SerializersTestCase(TestCase):
             'content': 'keks',
             'created_at': data['created_at']
         }
+        self.assertEqual(exp_data, data)
+
+    def test_create_post(self):
+        rubric = Rubric.objects.create(title='Видео')
+        post1 = Post.objects.create(rubric=rubric,
+                                    title='keks',
+                                    content='real keks',
+                                    image='',
+                                    author='maxek',
+                                    is_active=True)
+        data = PostCreateSerializer(post1).data
+        exp_data = {'rubric': rubric.id,
+                    'title': 'keks',
+                    'content': 'real keks',
+                    'image': None,
+                    'author': 'maxek', }
         self.assertEqual(exp_data, data)

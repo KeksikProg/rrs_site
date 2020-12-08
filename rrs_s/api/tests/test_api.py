@@ -6,11 +6,16 @@ from rest_framework.test import APITestCase
 from api.serializers import RubricListAndCreateSerializer, PostListSerializer, PostDetailSerializer, CommentsListAndCreateSerializer
 from main.models import Rubric, Post, Comments
 
-c = Client()
+"""Для тестирования ViewSet-ов и в целом API
+Перед проверкой надо оключать permissions, к сожалению хз как это щас поправить"""
+
+c = Client()  # Для того, чтобы имитировать клиента
 
 
 class ApiTestCase(APITestCase):
+    """Один тест кейс для всего"""
 
+    # testing get requests
     def test_get_list_rubric(self):
         rubric1 = Rubric.objects.create(title='Видео')
         rubric2 = Rubric.objects.create(title='Статьи')
@@ -69,6 +74,7 @@ class ApiTestCase(APITestCase):
         self.assertEqual(status.HTTP_200_OK, response.status_code)
         self.assertEqual(serializer_data, response.data)
 
+    # testing post requests
     def test_post_rubrics(self):
         url = reverse('api:rubrics-create')
         response = c.post(url, data={'title': 'Статьи'})
@@ -92,4 +98,3 @@ class ApiTestCase(APITestCase):
         url = reverse('api:posts-create')
         response = c.post(url, data={'rubric': f'{rubric.id}', 'title': 'keks', 'content': 'real keks', 'image': '', 'author': 'maxek', })
         self.assertEqual(status.HTTP_201_CREATED, response.status_code)
-
