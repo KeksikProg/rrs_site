@@ -54,7 +54,7 @@ INSTALLED_APPS = [
 
     'main',
     'api',
-    'push_notif',
+    'tasks',
 
 ]
 
@@ -204,3 +204,12 @@ AUTH_USER_MODEL = 'main.Client'
 STATIC_URL = '/static/'
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'main/static/main/media')
+
+REDIS_HOST = '127.0.0.1'
+REDIS_PORT = '6379'
+CELERY_BROKER_URL = 'redis://' + REDIS_HOST + ':' + REDIS_PORT + '/0'
+CELERY_BROKER_TRANSPORT_OPTIONS = {'visibility_timeout': 3600}
+CELERY_RESULT_BACKEND = 'redis://'
+CELERY_RESULT_CONTENT = 'redis://' + REDIS_HOST + ':' + REDIS_PORT + '/0'
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
