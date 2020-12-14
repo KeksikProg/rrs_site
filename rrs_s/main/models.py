@@ -76,6 +76,11 @@ class Post(models.Model):
         on_delete=models.PROTECT,
         verbose_name='Рубрика'
     )
+    link = models.CharField(
+        max_length=255,
+        null=True,
+        verbose_name='Ссылка(для видео)'
+    )
     title = models.CharField(
         max_length=100,
         verbose_name='Название',
@@ -98,6 +103,11 @@ class Post(models.Model):
         auto_now_add=True,
         db_index=True,
         verbose_name='Добавлено'
+    )
+    published = models.DateTimeField(
+        db_index=True,
+        null=True,
+        verbose_name='Опубликовано(для видео)'
     )
     is_active = models.BooleanField(
         default=False
