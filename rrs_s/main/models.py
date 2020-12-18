@@ -3,7 +3,7 @@ from django.contrib.auth.validators import UnicodeUsernameValidator
 from django.db import models
 from uuslug import slugify
 
-from main.util import get_timestamp_path, is_active_post
+from main.util import get_timestamp_path
 
 
 class Donations(models.Model):
@@ -87,6 +87,7 @@ class Post(models.Model):
         unique=True,
     )
     content = models.TextField(
+        null=True,
         blank=True,
         verbose_name='Описание'
     )

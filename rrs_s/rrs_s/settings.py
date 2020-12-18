@@ -39,6 +39,9 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
+    'main',
+    'api',
+
     'easy_thumbnails',
     'django_cleanup',
     'bootstrap4',
@@ -52,9 +55,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
 
-    'main',
-    'api',
-    'tasks',
+
 
 ]
 
