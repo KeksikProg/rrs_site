@@ -30,7 +30,7 @@ class SerializersTestCase(TestCase):
                                     is_active=True)
         data = PostDetailSerializer(post1).data
         exp_data = {
-            'rubric': rubric.id,
+            'rubric': rubric.you_id,
             'title': 'keks',
             'content': 'real keks',
             'image': None,
@@ -56,7 +56,7 @@ class SerializersTestCase(TestCase):
         data = PostListSerializer([post1, post2], many=True).data
         exp_data = [
             {
-                'rubric': rubric.id,
+                'rubric': rubric.you_id,
                 'title': 'keks',
                 'image': None,
                 'author': 'maxek',
@@ -64,7 +64,7 @@ class SerializersTestCase(TestCase):
                 'slug': 'keks'
             },
             {
-                'rubric': rubric.id,
+                'rubric': rubric.you_id,
                 'title': 'keksik',
                 'image': None,
                 'author': 'maxek',
@@ -85,7 +85,7 @@ class SerializersTestCase(TestCase):
         comment = Comments.objects.create(post=post1, author='maxek', content='keks')
         data = CommentsListAndCreateSerializer(comment).data
         exp_data = {
-            'post': post1.id,
+            'post': post1.you_id,
             'author': 'maxek',
             'content': 'keks',
             'created_at': data['created_at']
@@ -101,7 +101,7 @@ class SerializersTestCase(TestCase):
                                     author='maxek',
                                     is_active=True)
         data = PostCreateSerializer(post1).data
-        exp_data = {'rubric': rubric.id,
+        exp_data = {'rubric': rubric.you_id,
                     'title': 'keks',
                     'content': 'real keks',
                     'image': None,

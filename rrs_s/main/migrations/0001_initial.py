@@ -47,7 +47,7 @@ class Migration(migrations.Migration):
                 ('image', models.ImageField(blank=True, upload_to=main.util.get_timestamp_path, verbose_name='Фотография')),
                 ('author', models.CharField(max_length=150, verbose_name='Автор')),
                 ('created_at', models.DateTimeField(auto_now_add=True, db_index=True, verbose_name='Добавлено')),
-                ('is_active', models.BooleanField(default=main.util.is_active_post)),
+                ('is_active', models.BooleanField(default=False)),
                 ('slug', models.SlugField(unique=True)),
                 ('rubric', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='main.rubric', verbose_name='Рубрика')),
             ],

@@ -79,7 +79,8 @@ class Post(models.Model):
     link = models.CharField(
         max_length=255,
         null=True,
-        verbose_name='Ссылка(для видео)'
+        verbose_name='Ссылка(для видео)',
+        unique=True
     )
     title = models.CharField(
         max_length=100,

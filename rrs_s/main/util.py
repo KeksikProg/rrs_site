@@ -4,7 +4,7 @@ import xml.etree.ElementTree as et
 
 import requests
 
-channel_link = 'https://www.youtube.com/feeds/videos.xml?channel_id=UCNNnJK87LJ6pAd77iRZEcpg'
+you_id = 'UCMQOklXJ48NEndrvDs4UtVQ'
 
 
 def get_timestamp_path(instance, filename):
@@ -12,8 +12,12 @@ def get_timestamp_path(instance, filename):
     return f'{datetime.now().timestamp()}{splitext(filename)[1]}'
 
 
-def get_data(url=channel_link):
-    root = et.fromstring(requests.get(url).content.decode('utf-8'))
+def get_data_from_xml(channel_id=you_id):
+    """Функция, которя будет делать из xml страницы канала, список со словарями объектов"""
+    """Чтобы не было таких же ошибок как у меня, надо запомнить, что xml обновляется не срау как html а через несколько минут"""
+
+    url = f'https://www.youtube.com/feeds/videos.xml?channel_id={channel_id}'
+    root = et.fromstring(requests.get(url).content.decode('utf-8')) #
     exp_data = []
 
     for page in root.findall('{http://www.w3.org/2005/Atom}entry'):
@@ -25,4 +29,3 @@ def get_data(url=channel_link):
         exp_data.append(data)
 
     return exp_data
-

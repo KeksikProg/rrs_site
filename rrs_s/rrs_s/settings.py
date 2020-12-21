@@ -16,7 +16,6 @@ import os
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
 
@@ -27,7 +26,6 @@ SECRET_KEY = os.getenv('secret_key')
 DEBUG = True
 
 ALLOWED_HOSTS = []
-
 
 # Application definition
 
@@ -55,22 +53,20 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
 
-
-
 ]
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework.authentication.TokenAuthentication',  # Обычные токены, которые будут созранятся в базу данных
-        'rest_framework_simplejwt.authentication.JWTAuthentication', # для жвт токенов
+        'rest_framework_simplejwt.authentication.JWTAuthentication',  # для жвт токенов
         'oauth2_provider.contrib.rest_framework.OAuth2Authentication',  # для авторизации с помощью OAUTH2
-        'rest_framework_social_oauth2.authentication.SocialAuthentication', # тоже самое для чего и выше
+        'rest_framework_social_oauth2.authentication.SocialAuthentication',  # тоже самое для чего и выше
     ),
-    'DEFAULT_FILTER_BACKENDS':(
-        'django_filters.rest_framework.DjangoFilterBackend' # Для фильтрации запросов drf
+    'DEFAULT_FILTER_BACKENDS': (
+        'django_filters.rest_framework.DjangoFilterBackend'  # Для фильтрации запросов drf
     ),
-    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination', # Что будет отвечать за пагинацию на сайте
-    'PAGE_SIZE': 5, # Какое кол-во записей будет выводится на 1 странице
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',  # Что будет отвечать за пагинацию на сайте
+    'PAGE_SIZE': 5,  # Какое кол-во записей будет выводится на 1 странице
 }
 
 # smtp
@@ -79,7 +75,6 @@ EMAIL_USE_TLS = True  # Использовать ли протокол шифр�
 EMAIL_HOST = os.getenv('email_host')  # Какой протокол SMTP использовать
 EMAIL_HOST_USER = os.getenv('email_host_user')  # Почта с которой будут отправлятся все письма
 EMAIL_HOST_PASSWORD = os.getenv('email_host_pass')  # Пароль от это почты
-
 
 DJOSER = {
     """
@@ -108,21 +103,20 @@ MIDDLEWARE = [
 ROOT_URLCONF = 'rrs_s.urls'
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
-
 SOCIAL_AUTH_VK_OAUTH2_KEY = os.getenv('vk_key')  # Секретный ключ который берется из приложения вконтакте
-SOCIAL_AUTH_VK_OAUTH2_SECRET = os.getenv('vk_secret') # тоже ключ и тоже берется из приложения
+SOCIAL_AUTH_VK_OAUTH2_SECRET = os.getenv('vk_secret')  # тоже ключ и тоже берется из приложения
 
-SOCIAL_AUTH_VK_OAUTH2_SCOPE = ['email'] # Чтобы дополнительно запросить у пользователя почту
+SOCIAL_AUTH_VK_OAUTH2_SCOPE = ['email']  # Чтобы дополнительно запросить у пользователя почту
 
-AUTHENTICATION_BACKENDS = ( # Список классов реализующий аутентефикацию и авторизацию
-    'social_core.backends.vk.VKOAuth2', # Это и ниже для авторизации с помощью вк
+AUTHENTICATION_BACKENDS = (  # Список классов реализующий аутентефикацию и авторизацию
+    'social_core.backends.vk.VKOAuth2',  # Это и ниже для авторизации с помощью вк
     'django.contrib.auth.backends.ModelBackend',)
 
 THUMBNAIL_ALIASES = {
-    '' : {
-        'default' : {
-            'size' : (201, 201),
-            'crop' : 'scale',
+    '': {
+        'default': {
+            'size': (201, 201),
+            'crop': 'scale',
         }
     }
 }
@@ -139,7 +133,7 @@ TEMPLATES = [
                 'django.template.context_processors.debug',
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
-                'social_django.context_processors.backends', # это и одно ниже для регистрации через соц сети
+                'social_django.context_processors.backends',  # это и одно ниже для регистрации через соц сети
                 'social_django.context_processors.login_redirect',
                 'django.contrib.messages.context_processors.messages',
             ],
@@ -149,7 +143,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'rrs_s.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
 
@@ -157,13 +150,12 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': os.getenv('db_name'),
-        'USER' : os.getenv('db_user'),
-        'PASSWORD' : os.getenv('db_pass'),
-        'HOST' : '127.0.0.1',
-        'PORT' : '5432',
+        'USER': os.getenv('db_user'),
+        'PASSWORD': os.getenv('db_pass'),
+        'HOST': '127.0.0.1',
+        'PORT': '5432',
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/3.1/ref/settings/#auth-password-validators
@@ -183,7 +175,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/3.1/topics/i18n/
 
@@ -198,7 +189,6 @@ USE_L10N = True
 USE_TZ = True
 AUTH_USER_MODEL = 'main.Client'
 
-
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
@@ -210,7 +200,7 @@ REDIS_HOST = '127.0.0.1'
 REDIS_PORT = '6379'
 CELERY_BROKER_URL = 'redis://' + REDIS_HOST + ':' + REDIS_PORT + '/0'
 CELERY_BROKER_TRANSPORT_OPTIONS = {'visibility_timeout': 3600}
-CELERY_RESULT_BACKEND = 'redis://'
-CELERY_RESULT_CONTENT = 'redis://' + REDIS_HOST + ':' + REDIS_PORT + '/0'
+CELERY_RESULT_BACKEND = 'redis://' + REDIS_HOST + ':' + REDIS_PORT + '/0'
+CELERY_RESULT_CONTENT = ['application/json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'

@@ -1,14 +1,20 @@
 import main
 from main.models import Post, Rubric
-from main.util import get_data
+from main.util import get_data_from_xml
+from rrs_s.celery import app
+
+"""В этом файле у нас будут храниться таски"""
 
 
-def check_videos_and_create(data=get_data()):
+@app.task
+def check_videos_and_create():
+    """Таска которая будет брать инфу из xml отображения канала ютуб и создавать объекты видео"""
+    data = get_data_from_xml()
     for item in data:
         try:
-            Post.objects.get(title=item['title'])
+            Post.objects.get(link=item['link'])  # title=item['title'], published=item['published']
         except main.models.Post.DoesNotExist:
-            post1 = Post.objects.create(
+            Post.objects.create(
                 rubric=Rubric.objects.get(title='Видео'),
                 link=item['link'],
                 title=item['title'],
@@ -17,4 +23,3 @@ def check_videos_and_create(data=get_data()):
                 image='',
                 author='maxek',
                 is_active=True)
-            print(post1)

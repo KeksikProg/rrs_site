@@ -89,12 +89,12 @@ class ApiTestCase(APITestCase):
                                     author='maxek',
                                     is_active=True)
         url = reverse('api:comments-create')
-        response = c.post(url, data={'post': f'{post1.id}', 'author': 'maxek', 'content': 'real keks'})
+        response = c.post(url, data={'post': f'{post1.you_id}', 'author': 'maxek', 'content': 'real keks'})
         self.assertEqual(status.HTTP_201_CREATED, response.status_code)
 
     def test_post_posts(self):
         rubric = Rubric.objects.create(title='Видео')
 
         url = reverse('api:posts-create')
-        response = c.post(url, data={'rubric': f'{rubric.id}', 'title': 'keks', 'content': 'real keks', 'image': '', 'author': 'maxek', })
+        response = c.post(url, data={'rubric': f'{rubric.you_id}', 'title': 'keks', 'content': 'real keks', 'image': '', 'author': 'maxek', })
         self.assertEqual(status.HTTP_201_CREATED, response.status_code)
