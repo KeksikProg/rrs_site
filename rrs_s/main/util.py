@@ -3,8 +3,15 @@ from os.path import splitext
 import xml.etree.ElementTree as et
 
 import requests
+from django.core.signing import Signer
+from django.dispatch import Signal
+from django.template.loader import render_to_string
+
+from rrs_s.settings import ALLOWED_HOSTS
 
 you_id = 'UCMQOklXJ48NEndrvDs4UtVQ'
+signer = Signer()
+user_registrated = Signal(providing_args=['instance'])
 
 
 def get_timestamp_path(instance, filename):
@@ -17,7 +24,7 @@ def get_data_from_xml(channel_id=you_id):
     """Чтобы не было таких же ошибок как у меня, надо запомнить, что xml обновляется не срау как html а через несколько минут"""
 
     url = f'https://www.youtube.com/feeds/videos.xml?channel_id={channel_id}'
-    root = et.fromstring(requests.get(url).content.decode('utf-8')) #
+    root = et.fromstring(requests.get(url).content.decode('utf-8'))  #
     exp_data = []
 
     for page in root.findall('{http://www.w3.org/2005/Atom}entry'):
@@ -29,3 +36,24 @@ def get_data_from_xml(channel_id=you_id):
         exp_data.append(data)
 
     return exp_data
+
+
+def send_activation_notif(client):
+    """Функция, которая будет отправлять письма с подтверждением"""
+
+    if ALLOWED_HOSTS:
+        host = 'http://' + ALLOWED_HOSTS
+    else:
+        host = 'http://localhost:8000'
+    context = {'client': client, 'host': host, 'sign': signer.sign(client.username)}
+    subj = render_to_string('email/activation_letter_subj.txt', context)
+    body = render_to_string('email/activation_letter_body.txt', context)
+    client.email_user(subj, body)
+
+
+def user_registrated_dispatcher(sender, **kwargs):
+    """Функция, которая берет из сигнала пользователя и отправляет письмо через другую функцию"""
+    send_activation_notif(kwargs['instance'])
+
+
+user_registrated.connect(user_registrated_dispatcher)

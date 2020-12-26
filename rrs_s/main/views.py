@@ -1,18 +1,27 @@
 from django.contrib import messages
 from django.contrib.admin.views.decorators import staff_member_required
+from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.views import LoginView, LogoutView, PasswordChangeView, PasswordResetView, PasswordResetDoneView, PasswordResetConfirmView
+from django.contrib.messages.views import SuccessMessageMixin
 from django.core.paginator import Paginator
+from django.core.signing import BadSignature
 from django.db.models import Q
 from django.http import Http404, HttpResponse
 from django.shortcuts import render, get_object_or_404, redirect
-from django.template import TemplateDoesNotExist
+import django.template
 from django.template.loader import get_template
+from django.urls import reverse_lazy
+from django.views.generic import CreateView, UpdateView, DeleteView, TemplateView
 
-from main.forms import SearchForm, PostForm, AIFormSet, CommentForm
-from main.models import Rubric, Post, Comments
-
+from main.forms import SearchForm, PostForm, AIFormSet, CommentForm, ClientRegForm, ChangeUserInfoForm
+from main.models import Rubric, Post, Comments, Client
 
 # other
+from main.util import signer
+
+
 def home(request):
     """Домашня страница, она будет главной"""
 
@@ -27,9 +36,25 @@ def docs(request, docs_page):
 
     try:
         template = get_template(f'main/{docs_page}.html')
-    except TemplateDoesNotExist:
+    except django.template.TemplateDoesNotExist:
         raise Http404
     return HttpResponse(template.render(request=request))
+
+
+def user_activate(request, sign):
+    try:
+        username = signer.unsign(sign)
+    except BadSignature:
+        raise Http404
+    user = get_object_or_404(Client, username=username)
+    if user.is_active:
+        messages.add_message(request, messages.INFO, message='Пользователь уже был активирован')
+        reverse_lazy('main:home')
+    else:
+        user.is_active = True
+        user.save()
+        messages.add_message(request, messages.SUCCESS, message='Пользователь активирован!')
+        reverse_lazy('main:home')
 
 
 # posts
@@ -65,10 +90,10 @@ def add_posts(request):
 
     if request.method == 'POST':
         rubric_article = get_object_or_404(Rubric, pk=2)
-        forms = PostForm(request.POST, request.FILES)
+        inital = {'rubric': rubric_article, 'author': request.user.username}
+        forms = PostForm(request.POST, request.FILES, initial=inital)
         if forms.is_valid():
             post = forms.save()
-            post.rubric = rubric_article
             formset = AIFormSet(request.POST, request.FILES, instance=post)
             if formset.is_valid():
                 formset.save()
@@ -117,7 +142,7 @@ def delete_posts(request, slug):
 
 
 @login_required(login_url='/user/login/')
-def posts_detail(request, slug):
+def detail_post(request, slug):
     """Детальное отображение поста (только авторизованные пользователи)"""
 
     post = get_object_or_404(Post, slug=slug)
@@ -138,3 +163,92 @@ def posts_detail(request, slug):
             messages.add_message(request, messages.WARNING, message='Комментарий не был добавлен!')
     context = {'post': post, 'ai': ai, 'comments': comments, 'form': form}
     return render(request, 'main/detail.html', context)
+
+
+# Authorization
+class CLogin(LoginView):
+    """Login View (Django classic)"""
+
+    template_name = 'main/login.html'
+
+
+class CLogout(LogoutView):
+    """Logout View (Django classic)"""
+
+    template_name = 'main/logout.html'
+
+
+# User
+class ClientRegView(CreateView):
+    """Для регистрации пользователей"""
+
+    model = Client
+    template_name = 'main/register.html'
+    form_class = ClientRegForm
+    success_url = reverse_lazy('main:login')
+
+
+class ClientRegisterDone(TemplateView):
+    """Просто выводит шаблон о том, что пользователь создан и его надо всего лишь подтвердить"""
+    template_name = 'main/client_register_done.html'
+
+
+class ChangeUserInfo(SuccessMessageMixin, UpdateView, LoginRequiredMixin):
+    model = Client
+    template_name = 'main/change_user_info.html'
+    form_class = ChangeUserInfoForm
+    success_url = reverse_lazy('main:profile')
+    success_message = 'Личные данные былы успешно изменены!'
+
+    def dispatch(self, request, *args, **kwargs):
+        self.user_id = request.user.pk
+        return super().dispatch(request, *args, **kwargs)
+
+    def get_object(self, queryset=None):
+        if not queryset:
+            queryset = self.get_queryset()
+            return super().get_object(queryset, pk=self.user_id)
+
+
+class ChangeClientPassword(LoginRequiredMixin, SuccessMessageMixin, PasswordChangeView):
+    template_name = 'main/change_client_password.html'
+    success_url = reverse_lazy('main:profile')
+    success_message = 'Пароль успешно изменен!'
+
+
+class DeleteClientView(LoginRequiredMixin, SuccessMessageMixin, DeleteView):
+    model = Client
+    template_name = 'main/delete_client.html'
+    success_url = reverse_lazy('main:home')
+    success_message = 'Пользователь успешно удален!'
+
+    def dispatch(self, request, *args, **kwargs):
+        self.user_id = request.user.pk
+        return super().dispatch(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        logout(request)
+        messages.add_message(request, messages.SUCCESS, message='Пользователь успешно удален!')
+        return super().post(request, *args, **kwargs)
+
+    def get_object(self, queryset=None):
+        if not queryset:
+            queryset = self.get_queryset()
+        return get_object_or_404(queryset, pk=self.user_id)
+
+
+# Reset password
+class ClientResetView(PasswordResetView):
+    template_name = 'main/password_reset_form.html'
+    subject_template_name = 'email/password_reset_subj.txt'
+    email_template_name = 'email/password_reset_body.html'
+    success_url = reverse_lazy('main:password_reset_done')
+
+
+class ClientPasswordResetDone(PasswordResetDoneView):
+    template_name = 'main/password_reset_done.html'
+
+
+class ClientPasswordResetConfirmView(PasswordResetConfirmView):
+    template_name = 'main/password_reset_confirm_view.html'
+    success_url = reverse_lazy('main:login')
