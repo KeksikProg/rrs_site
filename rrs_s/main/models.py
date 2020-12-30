@@ -74,7 +74,8 @@ class Post(models.Model):
     rubric = models.ForeignKey(
         Rubric,
         on_delete=models.PROTECT,
-        verbose_name='Рубрика'
+        verbose_name='Рубрика',
+        default=2
     )
     link = models.CharField(
         max_length=255,
@@ -104,7 +105,8 @@ class Post(models.Model):
     created_at = models.DateTimeField(
         auto_now_add=True,
         db_index=True,
-        verbose_name='Добавлено'
+        verbose_name='Добавлено',
+        null=True
     )
     published = models.DateTimeField(
         db_index=True,

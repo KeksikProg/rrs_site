@@ -5,7 +5,7 @@ from main.views import home, docs, CLogin, CLogout, ChangeUserInfo, ChangeClient
 urlpatterns = [
     # other
     path('', home, name='home'),
-    path('docs/<str:page>/', docs, name='docs'),
+    path('docs/<str:docs_page>/', docs, name='docs'),
 
     # user and profile
     path('profile/login/', CLogin.as_view(), name='login'),
@@ -26,10 +26,10 @@ urlpatterns = [
     path('profile/password_reset_confirm/<uidb64>/<token>/', ClientPasswordResetConfirmView.as_view(), name='password_reset_confirm'),
 
     # posts
-    path('posts/add/', add_posts, name='add_posts'),
-    path('posts/delete/<slug:slug>/', delete_posts, name='delete_posts'),
-    path('posts/change/<slug:slug>/', change_posts, name='change_posts'),
-    path('posts/detail/<slug:slug>/', detail_post, name='detail_post'),
-    path('posts/rubric/<slug:slug>/', by_rubric, name='by_rubric'),
+    path('posts_add/', add_posts, name='add_posts'),
+    path('posts_delete/<slug:slug>/', delete_posts, name='delete_posts'),
+    path('posts_change/<slug:slug>/', change_posts, name='change_posts'),
+    path('posts_detail/<slug:slug>/', detail_post, name='detail_post'),
+    path('posts_rubric/<slug:slug>/', by_rubric, name='by_rubric'),
 
 ]

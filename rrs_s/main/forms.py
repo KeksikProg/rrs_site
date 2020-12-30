@@ -21,7 +21,7 @@ class PostForm(forms.ModelForm):
 
     class Meta:
         model = Post
-        fields = ('rubric', 'title', 'content', 'author', 'image')
+        fields = ('title', 'content', 'image')
         widgets = {'created_at': forms.HiddenInput, 'author': forms.HiddenInput, 'rubric': forms.HiddenInput}
 
 

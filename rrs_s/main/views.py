@@ -8,12 +8,13 @@ from django.contrib.messages.views import SuccessMessageMixin
 from django.core.paginator import Paginator
 from django.core.signing import BadSignature
 from django.db.models import Q
-from django.http import Http404, HttpResponse
+from django.http import Http404, HttpResponse, HttpResponseServerError
 from django.shortcuts import render, get_object_or_404, redirect
 import django.template
 from django.template.loader import get_template
 from django.urls import reverse_lazy
 from django.views.generic import CreateView, UpdateView, DeleteView, TemplateView
+from loguru import logger
 
 from main.forms import SearchForm, PostForm, AIFormSet, CommentForm, ClientRegForm, ChangeUserInfoForm
 from main.models import Rubric, Post, Comments, Client
@@ -71,7 +72,7 @@ def by_rubric(request, slug):
         posts.filter(q)
     else:
         keyword = ''
-    form = SearchForm(inital={'keyword': keyword})
+    form = SearchForm(initial={'keyword': keyword})
 
     """paginator"""
     paginator = Paginator(posts, 5)
@@ -81,7 +82,7 @@ def by_rubric(request, slug):
         page_num = 1
 
     page = paginator.get_page(page_num)
-    context = {'rubric': rubric, 'page': page, 'posts': page.objects.object_list, 'form': form}
+    context = {'rubric': rubric, 'page': page, 'posts': page.object_list, 'form': form}
     return render(request, 'main/by_rubric.html', context)
 
 
@@ -89,21 +90,19 @@ def add_posts(request):
     """Функция, которая будет добавлять объекты записей, статьи"""
 
     if request.method == 'POST':
-        rubric_article = get_object_or_404(Rubric, pk=2)
-        inital = {'rubric': rubric_article, 'author': request.user.username}
-        forms = PostForm(request.POST, request.FILES, initial=inital)
+        forms = PostForm(request.POST, request.FILES)
         if forms.is_valid():
-            post = forms.save()
-            formset = AIFormSet(request.POST, request.FILES, instance=post)
+            article = forms.save()
+            formset = AIFormSet(request.POST, request.FILES, instance=article)
             if formset.is_valid():
                 formset.save()
-                messages.add_message(request, messages.SUCCESS, message='Пост будет добавлен после проверки модератором! Спасибо!')
+                messages.add_message(request, messages.SUCCESS, message='Статья успешно написана!')
                 return redirect('main:home')
     else:
         forms = PostForm(initial={})
         formset = AIFormSet()
-    context = {'forms': forms, 'formset': formset}
-    return render(request, 'main/add_posts.html', context)
+        context = {'forms': forms, 'formset': formset}
+        return render(request, 'main/add_posts.html', context)
 
 
 @staff_member_required
@@ -119,12 +118,14 @@ def change_posts(request, slug):
             if formset.is_valid():
                 formset.save()
                 messages.add_message(request, messages.SUCCESS, message='Статья была изменена!')
-                return redirect('main:post_detail', {'slug': slug})
+                return redirect('main:detail_post', slug)
+            else:
+                raise Http404
     else:
         form = PostForm(instance=post)
         formset = AIFormSet(instance=post)
-    context = {'form': form, 'formset': formset}
-    return render(request, 'main/change_posts.html', context)
+        context = {'form': form, 'formset': formset}
+        return render(request, 'main/change_posts.html', context)
 
 
 @staff_member_required

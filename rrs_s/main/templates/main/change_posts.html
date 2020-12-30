@@ -1,0 +1,17 @@
+{% extends 'layout/basic.html' %}
+
+
+{% load bootstrap4 %}
+
+{% block title %}Создание статьи{% endblock %}
+
+{% block content %}
+<h2>Создание статьи</h2>
+<form method = 'post' enctype="multipart/form-data">
+	{% csrf_token %}
+	{{forms.as_p}}
+	{{formset.as_p}}
+<!--	{{formset.management_form}}-->
+	<input>
+</form>
+{% endblock %}
