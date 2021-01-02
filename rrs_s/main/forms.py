@@ -30,8 +30,8 @@ class CommentForm(forms.ModelForm):
 
     class Meta:
         model = Comments
-        fields = '__all__'
-        widgets = {'post': forms.HiddenInput, 'author': forms.HiddenInput}
+        fields = ('content',)
+        widgets = {'post': forms.HiddenInput, 'author': forms.HiddenInput, 'created_at': forms.HiddenInput}
 
 
 class ClientRegForm(forms.ModelForm):

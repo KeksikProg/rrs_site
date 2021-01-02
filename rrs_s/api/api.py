@@ -7,7 +7,7 @@ from api.serializers import RubricListAndCreateSerializer, PostListSerializer, P
 from api.util import PostFilter, CommentsFilter
 from main.models import Rubric, Post, Comments
 
-SAFE_ACTIONS = ['list', 'retrieve'] # Безопасные действия, которые не меняют базу данных
+SAFE_ACTIONS = ['list', 'retrieve']  # Безопасные действия, которые не меняют базу данных
 
 
 class RubricViewSet(viewsets.ModelViewSet):
@@ -66,4 +66,4 @@ class CommentsViewSet(viewsets.ModelViewSet):
     filterset_class = CommentsFilter  # Фильтрация по постам, если будет просто список комментариев это будет бессмысленно
     lookup_field = 'slug'
     queryset = Comments.objects.all()
-    permission_classes = [IsAuthenticated] #Права
+    permission_classes = [IsAuthenticated]  # Права

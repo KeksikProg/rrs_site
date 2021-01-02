@@ -9,6 +9,7 @@ from rrs_s.celery import app
 @app.task
 def check_videos_and_create():
     """Таска которая будет брать инфу из xml отображения канала ютуб и создавать объекты видео"""
+
     data = get_data_from_xml()
     for item in data:
         try:

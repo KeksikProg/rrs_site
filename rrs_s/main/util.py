@@ -1,6 +1,6 @@
 from datetime import datetime
 from os.path import splitext
-import xml.etree.ElementTree as et
+import xml.etree.ElementTree as Et
 
 import requests
 from django.core.signing import Signer
@@ -24,7 +24,7 @@ def get_data_from_xml(channel_id=you_id):
     """Чтобы не было таких же ошибок как у меня, надо запомнить, что xml обновляется не срау как html а через несколько минут"""
 
     url = f'https://www.youtube.com/feeds/videos.xml?channel_id={channel_id}'
-    root = et.fromstring(requests.get(url).content.decode('utf-8'))  #
+    root = Et.fromstring(requests.get(url).content.decode('utf-8'))  #
     exp_data = []
 
     for page in root.findall('{http://www.w3.org/2005/Atom}entry'):

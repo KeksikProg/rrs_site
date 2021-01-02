@@ -1,23 +1,8 @@
 from django.contrib.auth.models import AbstractUser
-from django.contrib.auth.validators import UnicodeUsernameValidator
 from django.db import models
 from uuslug import slugify
 
 from main.util import get_timestamp_path
-
-
-class Donations(models.Model):
-    """Донаты пользователя или является ли он спонсором"""
-    sponsor = models.BooleanField(
-        default=False,
-        verbose_name='Является спонсором?'
-    )
-    donats = models.DecimalField(
-        max_digits=100,
-        decimal_places=2,
-        default=0,
-        verbose_name='Донаты'
-    )
 
 
 class Client(AbstractUser):
@@ -27,11 +12,6 @@ class Client(AbstractUser):
         default=False,
         db_index=True,
         verbose_name='Прошел активацию?',
-    )
-    donations = models.ForeignKey(
-        Donations,
-        on_delete=models.CASCADE,
-        null=True
     )
     slug = models.SlugField(
         unique=True,
@@ -114,7 +94,8 @@ class Post(models.Model):
         verbose_name='Опубликовано(для видео)'
     )
     is_active = models.BooleanField(
-        default=False
+        default=False,
+        verbose_name='Активация'
     )
     slug = models.SlugField(
         unique=True
@@ -130,8 +111,8 @@ class Post(models.Model):
         super().save(*args, **kwargs)
 
     class Meta:
-        verbose_name = ''
-        verbose_name_plural = ''
+        verbose_name = 'Пост'
+        verbose_name_plural = 'Посты'
         ordering = ['-created_at']
 
 
@@ -140,6 +121,7 @@ class AdditionalImage(models.Model):
     post = models.ForeignKey(
         Post,
         on_delete=models.CASCADE,
+        verbose_name='Пост'
 
     )
     image = models.ImageField(
@@ -160,6 +142,7 @@ class Comments(models.Model):
     post = models.ForeignKey(
         Post,
         on_delete=models.CASCADE,
+        verbose_name='Пост'
     )
     author = models.CharField(
         max_length=150,

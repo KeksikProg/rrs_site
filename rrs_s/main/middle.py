@@ -4,10 +4,7 @@ from main.models import Rubric
 def rubric_context_processor(request):
     """Будет добавлять в контекст каждого шаблона рубрики, поисковые слова и страницы"""
 
-    context = {}
-    context['rubric'] = Rubric.objects.all()
-    context['keyword'] = ''
-    context['all'] = ''
+    context = {'rubric': Rubric.objects.all(), 'keyword': '', 'all': ''}
     if 'keyword' in request.GET:
         keyword = request.GET['keyword']
         if keyword:

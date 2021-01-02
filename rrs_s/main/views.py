@@ -8,13 +8,12 @@ from django.contrib.messages.views import SuccessMessageMixin
 from django.core.paginator import Paginator
 from django.core.signing import BadSignature
 from django.db.models import Q
-from django.http import Http404, HttpResponse, HttpResponseServerError
+from django.http import Http404, HttpResponse
 from django.shortcuts import render, get_object_or_404, redirect
 import django.template
 from django.template.loader import get_template
 from django.urls import reverse_lazy
 from django.views.generic import CreateView, UpdateView, DeleteView, TemplateView
-from loguru import logger
 
 from main.forms import SearchForm, PostForm, AIFormSet, CommentForm, ClientRegForm, ChangeUserInfoForm
 from main.models import Rubric, Post, Comments, Client
@@ -119,8 +118,6 @@ def change_posts(request, slug):
                 formset.save()
                 messages.add_message(request, messages.SUCCESS, message='Статья была изменена!')
                 return redirect('main:detail_post', slug)
-            else:
-                raise Http404
     else:
         form = PostForm(instance=post)
         formset = AIFormSet(instance=post)
@@ -149,16 +146,16 @@ def detail_post(request, slug):
     post = get_object_or_404(Post, slug=slug)
     ai = post.additionalimage_set.all()  # Тут мы берем дополнительные изображения через такую функцию
     comments = Comments.objects.filter(post=post)
-    initial = {'post': post.pk, 'author': request.user.username}
-    form = CommentForm(initial=initial)
+    form = CommentForm()
     if request.method == 'POST':
         c_form = CommentForm(request.POST)
         if c_form.is_valid():
-            response = c_form.save()
+            response = c_form.save(commit=False)
             response.author = request.user.username
+            response.post = post
             response.save()
             messages.add_message(request, messages.SUCCESS, message='Комментарий успешно добавлен')
-            return redirect('main:post_detail', {'slug': slug})
+            return redirect('main:detail_post', slug)
         else:
             form = c_form
             messages.add_message(request, messages.WARNING, message='Комментарий не был добавлен!')

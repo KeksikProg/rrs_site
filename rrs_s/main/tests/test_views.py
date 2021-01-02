@@ -5,7 +5,7 @@ from django.test import TestCase, RequestFactory, Client
 from django.urls import reverse
 from loguru import logger
 
-from main.models import Rubric, Post
+from main.models import Rubric, Post, Comments
 from main.views import home, docs, by_rubric, add_posts
 
 
@@ -25,6 +25,12 @@ class ViewsTestCase(TestCase):
         exp_content = render_to_string('main/1.html')
 
         self.assertEqual(exp_content, response_content)
+
+    def test_error_docs(self):
+        url = reverse('main:docs', kwargs={'docs_page': -1})
+        response_status = self.client.get(url).status_code
+
+        self.assertEqual(404, response_status)
 
     def test_by_rubric(self):
         rubric = Rubric.objects.create(title='Видео')
@@ -116,3 +122,16 @@ class ViewsTestCase(TestCase):
         response_content = self.client.get(url).content.decode('utf-8')
         exp_data = render_to_string('main/detail.html')
         self.assertEqual(exp_data, response_content)
+
+    def test_detail_post_comments(self):
+        rubric = Rubric.objects.create(title='Видео')
+        post1 = Post.objects.create(rubric=rubric,
+                                    title='keks',
+                                    content='real keks',
+                                    image='',
+                                    author='maxek',
+                                    is_active=True)
+        data = {'content': 'Нехуительный пост'}
+        url = reverse('main:detail_post', kwargs={'slug': post1.slug})
+        response_code = self.client.post(url, data).status_code
+        self.assertEqual(302, response_code)
